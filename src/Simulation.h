@@ -17,7 +17,7 @@ namespace ecusim
         private:
             void tick();
             std::vector<Ecu*> ecu_list;
-            std::vector<std::vector<CanMessage_s>*> message_matrix;
+            std::vector<std::vector<CanMessage>*> message_matrix;
     };
 }
 

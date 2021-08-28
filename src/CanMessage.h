@@ -5,12 +5,16 @@
 
 namespace ecusim
 {
-    typedef struct 
+    class CanMessage
     {
-        int id;
-        char* data[CAN_MESSAGE_LEN];
-        unsigned short int dlc;    
-    } CanMessage_s;
+        public:
+            int id;
+            char data[CAN_MESSAGE_LEN];
+            unsigned short int dlc;
+
+            // friend bool operator < (const CanMessage& lhs, const CanMessage& rhs);
+            // friend bool operator > (const CanMessage& lhs, const CanMessage& rhs);    
+    };
 }
 
 #endif

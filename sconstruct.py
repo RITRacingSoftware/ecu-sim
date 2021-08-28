@@ -24,7 +24,8 @@ for directory in (d for d in Path(str(SRC_DIR)).iterdir() if d.is_dir()):
 
 cpp_env = Environment(
     CC='g++',
-    CPPPATH=src_dirs
+    CPPPATH=src_dirs,
+    CCFLAGS=["-ggdb"]
 )
 
 
@@ -40,5 +41,12 @@ for src_file in src_files:
 
 Alias('objs', obj_files)
 
+"""
+Instructions for building ecusim test program.
+"""
+
+test_prog = cpp_env.Program("test-prog", obj_files)
+
+Alias('test-prog', test_prog)
 
 

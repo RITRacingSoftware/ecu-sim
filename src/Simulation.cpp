@@ -1,4 +1,6 @@
+#include <algorithm>
 #include <queue>
+#include <iostream>
 
 #include "CanMessage.h"
 #include "Simulation.h"
@@ -26,23 +28,24 @@ void Simulation::tick()
     // Figure out the most CAN messages any ECU sent
     int i = 0;
     int longest_matrix_len = 0;
-
-    std::vector<std::vector<CanMessage_s>*>::iterator matrix_iter;
+    std::vector<std::vector<CanMessage>*>::iterator matrix_iter;
     for (matrix_iter = this->message_matrix.begin(); matrix_iter < this->message_matrix.end(); ++matrix_iter)
     {
         if ((*matrix_iter)->size() > longest_matrix_len) longest_matrix_len = (*matrix_iter)->size();
     }
 
     // "Send" each CAN message to each ECU
+    // This iterates through the matrices breadth-first.
     for (int i = 0; i < longest_matrix_len; i++)
     {
-        // sort by id
-        auto compare = [](CanMessage_s lhs, CanMessage_s rhs)
+        // Each of these messages was sent at the same time. Need to prioritize by CAN ID just like CAN hardware does
+        auto compare = [](CanMessage lhs, CanMessage rhs)
         {
-            return lhs.id - rhs.id;
+            return lhs.id > rhs.id;
         };
 
-        std::priority_queue<CanMessage_s, std::vector<CanMessage_s>, decltype(compare)> ordered_msgs(compare);
+        // "same time" means same index in respective ecu list here
+        std::priority_queue<CanMessage, std::vector<CanMessage>, decltype(compare)> ordered_msgs(compare);
         for (matrix_iter = this->message_matrix.begin(); matrix_iter < this->message_matrix.end(); ++matrix_iter) 
         {
             if ((*matrix_iter)->size() > i)
@@ -52,15 +55,32 @@ void Simulation::tick()
         }
 
         // Deliver CAN messages to ECUs in order
-        CanMessage_s next_msg;
+        CanMessage next_msg;
         while(ordered_msgs.size() > 0)
         {
+            // get the next msg
             next_msg = ordered_msgs.top();
+            int ecunum = 0;
             for (ecu_iter = this->ecu_list.begin(); ecu_iter < this->ecu_list.end(); ecu_iter++)
             {
+                struct compare
+                {
+                    CanMessage key;
+                    compare(CanMessage const &i): key(i) {}
                 
-                Ecu* ecu = *ecu_iter;
-                ecu->injectCan(next_msg);
+                    bool operator()(CanMessage const &i) {
+                        return (i.id == key.id);
+                    }
+                };
+                auto ecu_messages = this->message_matrix.at(ecunum);
+                // don't return CAN messages to sender.
+                if (!std::any_of(ecu_messages->begin(), ecu_messages->end(), compare(next_msg)))
+                {
+                    Ecu* ecu = *ecu_iter;
+                    ecu->injectCan(next_msg);
+                }
+
+                ecunum++;
             }
 
             ordered_msgs.pop();
@@ -77,10 +97,10 @@ void Simulation::run_ms(int num_ticks)
 
 Simulation::~Simulation()
 {
-    std::vector<Ecu*>::iterator ecu;
-    for (ecu = this->ecu_list.begin(); ecu < this->ecu_list.end(); ++ecu)
-    {
-        delete *ecu;
-    }
+    // std::vector<Ecu*>::iterator ecu;
+    // for (ecu = this->ecu_list.begin(); ecu < this->ecu_list.end(); ++ecu)
+    // {
+    //     delete *ecu;
+    // }
 }
 

@@ -18,12 +18,12 @@ namespace ecusim
     {
         public:
             virtual void tick(void) = 0;
-            virtual void injectCan(CanMessage_s) = 0;
-            virtual void set(std::string) = 0;
-            std::vector<CanMessage_s>* emptyCan(void);
-        
-        private:
-            std::vector<CanMessage_s> can_outbox;
+            virtual void injectCan(CanMessage) = 0;
+            virtual void set(std::string, float) = 0;
+            std::vector<CanMessage>* emptyCan(void);
+
+        protected:
+            std::vector<CanMessage> can_outbox;
     };
 }
 
