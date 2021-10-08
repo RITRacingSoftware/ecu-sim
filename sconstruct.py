@@ -29,14 +29,29 @@ cpp_env = Environment(
 )
 
 
+# build C++ library wrapper (BlfWriter) and c++ library (vector_blf)
+
+blfwriter_obj = cpp_env.Object(MODULES_DIR.File('BlfWriter.cpp'))
+
+vector_blf_so = File('/usr/local/lib/libVector_BLF.so.2')
+
+vector_blf_lib = Command(
+    [vector_blf_so],
+    [],
+    ["cd /vc/libs/vector_blf && mkdir -p build && cd build && cmake .. && make && make install DESTDIR=.. && make install && /usr/sbin/ldconfig"]
+)
+
+# bms_sim_objs['BlfWriter'] = cpp_env.SharedObject(SIM_DIR.File('BlfWriter/BlfWriter.cpp'))
+Depends(blfwriter_obj, vector_blf_so)
+
+
 """
 Instructions for building ecusim modules.
 """
 
-obj_files = []
+obj_files = [blfwriter_obj, vector_blf_so]
 
 for src_file in src_files:
-    print(src_file)
     obj_files.append(cpp_env.Object(src_file))
 
 Alias('objs', obj_files)
