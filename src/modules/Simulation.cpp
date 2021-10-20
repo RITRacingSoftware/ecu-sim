@@ -2,7 +2,7 @@
 #include <queue>
 #include <iostream>
 
-#include "CanMessage.h"
+#include "CanMsg.h"
 #include "Simulation.h"
 
 using namespace ecusim;
@@ -28,7 +28,7 @@ void Simulation::tick()
     // Figure out the most CAN messages any ECU sent
     int i = 0;
     int longest_matrix_len = 0;
-    std::vector<std::vector<CanMessage>*>::iterator matrix_iter;
+    std::vector<std::vector<CanMsg>*>::iterator matrix_iter;
     for (matrix_iter = this->message_matrix.begin(); matrix_iter < this->message_matrix.end(); ++matrix_iter)
     {
         if ((*matrix_iter)->size() > longest_matrix_len) longest_matrix_len = (*matrix_iter)->size();
@@ -39,13 +39,13 @@ void Simulation::tick()
     for (int i = 0; i < longest_matrix_len; i++)
     {
         // Each of these messages was sent at the same time. Need to prioritize by CAN ID just like CAN hardware does
-        auto compare = [](CanMessage lhs, CanMessage rhs)
+        auto compare = [](CanMsg lhs, CanMsg rhs)
         {
             return lhs.id > rhs.id;
         };
 
         // "same time" means same index in respective ecu list here
-        std::priority_queue<CanMessage, std::vector<CanMessage>, decltype(compare)> ordered_msgs(compare);
+        std::priority_queue<CanMsg, std::vector<CanMsg>, decltype(compare)> ordered_msgs(compare);
         for (matrix_iter = this->message_matrix.begin(); matrix_iter < this->message_matrix.end(); ++matrix_iter) 
         {
             if ((*matrix_iter)->size() > i)
@@ -55,7 +55,7 @@ void Simulation::tick()
         }
 
         // Deliver CAN messages to ECUs in order
-        CanMessage next_msg;
+        CanMsg next_msg;
         while(ordered_msgs.size() > 0)
         {
             // get the next msg
@@ -65,10 +65,10 @@ void Simulation::tick()
             {
                 struct compare
                 {
-                    CanMessage key;
-                    compare(CanMessage const &i): key(i) {}
+                    CanMsg key;
+                    compare(CanMsg const &i): key(i) {}
                 
-                    bool operator()(CanMessage const &i) {
+                    bool operator()(CanMsg const &i) {
                         return (i.id == key.id);
                     }
                 };

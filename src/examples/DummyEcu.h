@@ -10,7 +10,7 @@ namespace ecusim
         public:
             DummyEcu(std::string);
             void tick(void);
-            void injectCan(CanMessage);
+            void injectCan(CanMsg);
             void set(std::string, float);
         
         private:

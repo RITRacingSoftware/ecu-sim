@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-#include "CanMessage.h"
+#include "CanMsg.h"
 
 namespace ecusim
 {
@@ -18,12 +18,13 @@ namespace ecusim
     {
         public:
             virtual void tick(void) = 0;
-            virtual void injectCan(CanMessage) = 0;
+            virtual void injectCan(CanMsg) = 0;
             virtual void set(std::string, float) = 0;
-            std::vector<CanMessage>* emptyCan(void);
+            virtual float get(std::string) = 0;
+            std::vector<CanMsg>* emptyCan(void);
 
         protected:
-            std::vector<CanMessage> can_outbox;
+            std::vector<CanMsg> can_outbox;
     };
 }
 

@@ -5,7 +5,7 @@
 
 namespace ecusim
 {
-    class CanMessage
+    class CanMsg
     {
         public:
             int id;

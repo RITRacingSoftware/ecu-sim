@@ -14,7 +14,7 @@ void DummyEcu::tick(void)
     std::cout << this->name << ": ticking!" << std::endl;
 }
 
-void DummyEcu::injectCan(CanMessage msg)
+void DummyEcu::injectCan(CanMsg msg)
 {
     std::cout << this->name << ": received CAN message with ID: " << msg.id << std::endl;
 }
@@ -23,7 +23,7 @@ void DummyEcu::set(std::string key, float value)
 {
     if (key == "CAN")
     {
-        CanMessage msg;
+        CanMsg msg;
         msg.id = value;
         msg.data[0] = 'a';
         msg.dlc = 8;

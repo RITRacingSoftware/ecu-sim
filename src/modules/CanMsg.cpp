@@ -1,4 +1,4 @@
-#include "CanMessage.h"
+#include "CanMsg.h"
 
 // bool ecusim::CanMessage::operator < (const ecusim::CanMessage& lhs, const ecusim::CanMessage& rhs)
 // {
