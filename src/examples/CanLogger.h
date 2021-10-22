@@ -4,6 +4,11 @@
 
 using namespace ecusim;
 
+/**
+ * Used to log CAN messages in BLF format.
+ * As long as this ECU is part of the sim, 
+ * it adds each message transmitted on the bus to a BLF log file.
+ */
 class CanLogger: public Ecu {
     public:
         CanLogger(char* fileName);
