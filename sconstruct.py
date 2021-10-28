@@ -49,7 +49,7 @@ vector_blf_so = File('/usr/local/lib/libVector_BLF.so.2')
 vector_blf_lib = Command(
     [vector_blf_so],
     [],
-    [f"touch libs/vector_blf/LICENSE.GPL-3.0 && cd {REPO_ROOT_DIR.abspath}/libs/vector_blf && mkdir -p build && cd build && cmake .. && make && make install DESTDIR=.. && make install && /usr/sbin/ldconfig"]
+    [f"cd {REPO_ROOT_DIR.abspath}/libs/vector_blf && touch LICENSE.GPL-3.0 && mkdir -p build && cd build && cmake .. && make && make install DESTDIR=.. && make install && /usr/sbin/ldconfig"]
 )
 
 # blf_o = cpp_env.SharedObject(MODULES_DIR.File('BlfWriter.cpp'))
@@ -67,7 +67,12 @@ Instructions for building ecusim modules.
 ecusim_objs = []
 
 for src_file in module_src_files + example_src_files:
-    ecusim_objs.append(cpp_env.Object(src_file))
+    file_name = src_file.abspath.split('/')[-1]
+
+    obj = cpp_env.Object(src_file)
+    if file_name == 'BlfWriter.cpp':
+        Depends(obj, vector_blf_so)
+    ecusim_objs.append(obj)
 
 to_return['ecusim_objs'] = ecusim_objs
 to_return['blf_lib'] = vector_blf_so
