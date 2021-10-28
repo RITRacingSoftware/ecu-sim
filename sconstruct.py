@@ -49,7 +49,7 @@ vector_blf_so = File('/usr/local/lib/libVector_BLF.so.2')
 vector_blf_lib = Command(
     [vector_blf_so],
     [],
-    [f"cd {REPO_ROOT_DIR.abspath}/libs/vector_blf && mkdir -p build && cd build && cmake .. && make && make install DESTDIR=.. && make install && /usr/sbin/ldconfig"]
+    [f"touch libs/vector_blf/LICENSE.GPL-3.0 && cd {REPO_ROOT_DIR.abspath}/libs/vector_blf && mkdir -p build && cd build && cmake .. && make && make install DESTDIR=.. && make install && /usr/sbin/ldconfig"]
 )
 
 # blf_o = cpp_env.SharedObject(MODULES_DIR.File('BlfWriter.cpp'))
