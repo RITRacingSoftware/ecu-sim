@@ -44,13 +44,13 @@ cpp_env = Environment(
 
 # build C++ library wrapper (BlfWriter) and c++ library (vector_blf)
 
-vector_blf_so = File('/usr/local/lib/libVector_BLF.so.2')
+# vector_blf_so = File('/usr/local/lib/libVector_BLF.so.2')
 
-vector_blf_lib = Command(
-    [vector_blf_so],
-    [],
-    [f"cd {REPO_ROOT_DIR.abspath}/libs/vector_blf && touch LICENSE.GPL-3.0 && mkdir -p build && cd build && cmake .. && make && make install DESTDIR=.. && make install && /usr/sbin/ldconfig"]
-)
+# vector_blf_lib = Command(
+#     [vector_blf_so],
+#     [],
+#     [f"cd {REPO_ROOT_DIR.abspath}/libs/vector_blf && touch LICENSE.GPL-3.0 && mkdir -p build && cd build && cmake .. && make && make install DESTDIR=.. && make install && /usr/sbin/ldconfig"]
+# )
 
 # blf_o = cpp_env.SharedObject(MODULES_DIR.File('BlfWriter.cpp'))
 # Depends(blf_o, vector_blf_so)
@@ -70,12 +70,12 @@ for src_file in module_src_files + example_src_files:
     file_name = src_file.abspath.split('/')[-1]
 
     obj = cpp_env.Object(src_file)
-    if file_name == 'BlfWriter.cpp':
-        Depends(obj, vector_blf_so)
+    # if file_name == 'BlfWriter.cpp':
+    #     Depends(obj, vector_blf_so)
     ecusim_objs.append(obj)
 
 to_return['ecusim_objs'] = ecusim_objs
-to_return['blf_lib'] = vector_blf_so
+# to_return['blf_lib'] = vector_blf_so
 
 """
 Instructions for building ecusim test program.
